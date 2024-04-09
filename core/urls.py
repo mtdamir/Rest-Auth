@@ -15,40 +15,24 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import  re_path
+from django.urls import re_path, path
 from . import views
+from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 
-from drf_yasg2 import openapi
-from drf_yasg2.views import get_schema_view
-from rest_framework import permissions
 
-schema_view = get_schema_view(
-    openapi.Info(
-        title="AI Hube",
-        default_version='v1.0',
-        description="AIHUB Api for development purpose",
-        terms_of_service="https://aihub.com/",
-        contact=openapi.Contact(email="info@aihub.com"),
-        license=openapi.License(name="MIT License"),
-    ),
-    public=True,
-    permission_classes=(permissions.AllowAny,),
-)
+
 
 urlpatterns = [
     re_path('admin/', admin.site.urls),
-    re_path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
-    re_path('api/api.json/', schema_view.without_ui(cache_timeout=0), name='schema-swagger-ui'),
-    re_path('', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     re_path('login', views.login),
+    re_path('login-new', views.UserDirectRegistrationView.as_view(), name="login-new"),
     re_path('signup', views.signup),
     re_path('test_token', views.test_token),
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    # Optional UI:
+    path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
 
-    # re_path(
-    #     "docs/",
-    #     schema_view.with_ui("swagger", cache_timeout=0),
-    #     name="schema-swagger-ui",
-    # ),
 ]
 
 
