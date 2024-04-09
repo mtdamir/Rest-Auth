@@ -18,7 +18,6 @@ from django.contrib import admin
 from django.urls import re_path, path
 from . import views
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
-<<<<<<< HEAD
 
 urlpatterns = [
     re_path('admin/', admin.site.urls),
@@ -26,26 +25,8 @@ urlpatterns = [
     re_path('login-new/', views.UserDirectRegistrationView.as_view(), name='login-new'),
     re_path('signup/', views.SignupView.as_view(), name='signup'),
     re_path('test_token/', views.TestTokenView.as_view(), name='test_token'),
-=======
-
-
-
-
-urlpatterns = [
-    re_path('admin/', admin.site.urls),
-    re_path('login', views.login),
-    re_path('login-new', views.UserDirectRegistrationView.as_view(), name="login-new"),
-    re_path('signup', views.signup),
-    re_path('test_token', views.test_token),
->>>>>>> 9c41a4662d2b10315cd7bd6ca92c71e7e500d6e2
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     # Optional UI:
     path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
     path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
-<<<<<<< HEAD
-=======
-
->>>>>>> 9c41a4662d2b10315cd7bd6ca92c71e7e500d6e2
 ]
-
-
