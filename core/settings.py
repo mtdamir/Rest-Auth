@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'drf_spectacular',
+    'django.contrib.auth',
+    'organizations',
 ]
 
 # For Authorization add settings below
@@ -150,8 +152,9 @@ SPECTACULAR_SETTINGS = {
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
     # OTHER SETTINGS
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 9c41a4662d2b10315cd7bd6ca92c71e7e500d6e2
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'organizations.backends.OrganizationBackend',
+]
