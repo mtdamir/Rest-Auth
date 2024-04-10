@@ -8,6 +8,10 @@ from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
 from rest_framework import generics, serializers, status
 from drf_spectacular.utils import extend_schema
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
+
+
 
 from .serializers import UserSerializer
 
@@ -60,8 +64,8 @@ class SignupView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class TestTokenView(APIView):
-    @authentication_classes([SessionAuthentication, TokenAuthentication])
-    @permission_classes([IsAuthenticated])
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def get(self, request):
         return Response({"passed for {}".format(request.user.username)})
-
