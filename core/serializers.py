@@ -9,6 +9,7 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
 
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -20,3 +21,19 @@ class UserSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
         return user
+
+
+class MessageSerializer(serializers.ModelSerializer):
+    message = serializers.CharField()
+
+    class Meta:
+        model = User
+        fields = ('message',)
+
+
+class ResponseSerializer(serializers.ModelSerializer):
+    response = serializers.CharField()
+
+    class Meta:
+        model = User
+        fields = ('response',)

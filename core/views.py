@@ -9,14 +9,10 @@ from rest_framework.authtoken.models import Token
 from rest_framework import generics, serializers, status
 from drf_spectacular.utils import extend_schema
 
-from .serializers import UserSerializer
+from .serializers import UserSerializer, MessageSerializer, ResponseSerializer
+from .tools_utils import *
 
 class UserDirectRegistrationView(generics.GenericAPIView):
-    """
-    This view is for register user from home page, which need to
-    verify user's email and then redirect user to dashboard and decide
-    which type of user wanted to be, Supporter or Producer.
-    """
     serializer_class = UserSerializer
 
     @extend_schema(
@@ -32,8 +28,10 @@ class UserDirectRegistrationView(generics.GenericAPIView):
         serializer = UserSerializer(user)
         return Response({'token': token.key, 'user': serializer.data})
 
+
 class LoginView(APIView):
     @extend_schema(
+        request=UserSerializer,
         responses={200: UserSerializer}
     )
     def post(self, request):
@@ -43,6 +41,7 @@ class LoginView(APIView):
         token, created = Token.objects.get_or_create(user=user)
         serializer = UserSerializer(user)
         return Response({'token': token.key, 'user': serializer.data})
+
 
 class SignupView(APIView):
     @extend_schema(
@@ -59,9 +58,66 @@ class SignupView(APIView):
             return Response({"token": token.key, "user": serializer.data})
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 class TestTokenView(APIView):
-    @authentication_classes([SessionAuthentication, TokenAuthentication])
-    @permission_classes([IsAuthenticated])
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def get(self, request):
         return Response({"passed for {}".format(request.user.username)})
+
+
+class ChatWith_qwen_72b(APIView):
+    serializer_class = MessageSerializer
+    # authentication_classes = [SessionAuthentication, TokenAuthentication]
+    # permission_classes = [IsAuthenticated]
+
+    @extend_schema(
+        request=MessageSerializer,
+        responses={200: ResponseSerializer}
+    )
+    def post(self, request):
+        message = request.data['message']
+        print(message)
+        response = call_qwen1572_client(message)
+        return Response({
+            "response": response
+        }, status=status.HTTP_200_OK)
+
+
+class ChatWith_gpt_3_5(APIView):
+    serializer_class = MessageSerializer
+    # authentication_classes = [SessionAuthentication, TokenAuthentication]
+    # permission_classes = [IsAuthenticated]
+
+    @extend_schema(
+        request=MessageSerializer,
+        responses={200: ResponseSerializer}
+    )
+    def post(self, request):
+        message = request.data['message']
+        print(message)
+        response = call_with_gpt_3_5(message)
+        return Response({
+            "response": response
+        }, status=status.HTTP_200_OK)
+
+
+class ChatWith_claude_3_opus(APIView):
+    serializer_class = MessageSerializer
+    # authentication_classes = [SessionAuthentication, TokenAuthentication]
+    # permission_classes = [IsAuthenticated]
+
+    @extend_schema(
+        request=MessageSerializer,
+        responses={200: ResponseSerializer}
+    )
+    def post(self, request):
+        message = request.data['message']
+        print(message)
+        response = call_with_claude_3_opus(message)
+        return Response({
+            "response": response
+        }, status=status.HTTP_200_OK)
+
 

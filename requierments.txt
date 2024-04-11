@@ -34,3 +34,6 @@ typing_extensions==4.11.0
 uritemplate==4.1.1
 urllib3==2.2.1
 django-organizations== 2.4.1
+gradio_client
+openai
+anthropic
