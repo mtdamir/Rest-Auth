@@ -17,7 +17,7 @@ def call_qwen1572_client(message):
 
 from openai import OpenAI
 client = OpenAI(
-    api_key='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'
+    api_key=''
 )
 
 
@@ -36,7 +36,7 @@ import anthropic
 
 anthropic_client = anthropic.Anthropic(
     # defaults to os.environ.get("ANTHROPIC_API_KEY")
-    api_key="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",
+    api_key="",
 )
 def call_with_claude_3_opus(message):
     message = anthropic_client.messages.create(
