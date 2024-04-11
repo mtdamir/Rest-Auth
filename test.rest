@@ -1,17 +1,19 @@
-POST http://127.0.0.1:8000/signup 
+POST http://127.0.0.1:8000/signup/ 
 Content-Type: application/json
 
-{ "username": "Amir2", "password": "Pass1234!", "email": "amir@mail.com" }
+{ "username": "Amir8", "password": "Pass1234!", "email": "amir@mail.com" }
 
 ###
 
-POST http://127.0.0.1:8000/login 
+POST http://127.0.0.1:8000/login/ 
 Content-Type: application/json
 
-{ "username": "Amir2", "password": "Pass1234!" }
+{ "username": "Amir8", "password": "Pass1234!" }
 
 ###
 
-GET http://127.0.0.1:8000/test_token 
+GET http://127.0.0.1:8000/test_token/ 
 Content-Type: application/json
-Authorization: Token f84753a6bdd4b0383799050c259da2cd539c22e2
+Authorization: Token 1cb035ead83f58cb87e67bb5091eddade0c1fe00
+
+
