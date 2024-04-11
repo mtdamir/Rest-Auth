@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'drf_spectacular',
-    'organizations',
+    'accounts.apps.AccountsConfig',
 ]
 
 # For Authorization add settings below
@@ -146,14 +146,15 @@ REST_FRAMEWORK = {
 }
 
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'Your Project API',
-    'DESCRIPTION': 'Your project description',
-    'VERSION': '1.0.0',
+    'TITLE': 'AIHUB MVP',
+    'DESCRIPTION': 'One Page for all AI tools',
+    'VERSION': '0.1.0',
     'SERVE_INCLUDE_SCHEMA': False,
     # OTHER SETTINGS
 }
 
-AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
-    'organizations.backends.OrganizationBackend',
-]
+# AUTHENTICATION_BACKENDS = [
+#     'django.contrib.auth.backends.ModelBackend',
+# ]
+
+AUTH_USER_MODEL = 'accounts.User'
