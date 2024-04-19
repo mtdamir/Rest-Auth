@@ -8,6 +8,9 @@ from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
 from rest_framework import generics, serializers, status
 from drf_spectacular.utils import extend_schema
+from .serializers import UserRegisterSerializer
+
+from rest_framework_simplejwt.tokens import RefreshToken
 
 from .serializers import UserSerializer, MessageSerializer, ResponseSerializer
 from .tools_utils import *
@@ -121,3 +124,33 @@ class ChatWith_claude_3_opus(APIView):
         }, status=status.HTTP_200_OK)
 
 
+class LogoutUserView(APIView):
+    @extend_schema(
+        request=UserRegisterSerializer,
+        responses={200: UserRegisterSerializer}
+    )
+    def logout_user(self, request):
+        request.user.auth_token.delete()
+        return Response({"Message": "You are logged out"}, status=status.HTTP_200_OK)
+
+class UserRegisterView(APIView):
+    @extend_schema(
+        request=UserRegisterSerializer,
+        responses={200: UserRegisterSerializer}
+    )
+    def user_register_view(self, request):
+        serializer = UserRegisterSerializer(data=request.data)
+        data = {}
+        if serializer.is_valid():
+            account = serializer.save()
+            data['response'] = 'Account has been created'
+            data['username'] = account.username
+            data['email'] = account.email
+            refresh = RefreshToken.for_user(account)
+            data['token'] = {
+                'refresh': str(refresh),
+                'access': str(refresh.access_token)
+            }
+        else:
+            data = serializer.errors
+        return Response(data, status=status.HTTP_200_OK)
