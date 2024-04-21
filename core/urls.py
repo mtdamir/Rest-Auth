@@ -14,7 +14,7 @@ urlpatterns = [
     re_path('chat_with_gpt_3_5/', views.ChatWith_gpt_3_5.as_view(), name='test_token'),
     re_path('chat_with_claude_3_opus/', views.ChatWith_claude_3_opus.as_view(), name='test_token'),
     path("logout_user/", views.LogoutUserView.as_view(), name="logout_user"),
-    path("register/", views.UserRegisterView.as_view, name="register"),
+    path('register/', views.UserRegisterView.as_view(), name='register'),
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     # Optional UI:
     path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),

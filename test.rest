@@ -1,4 +1,4 @@
-POST http://127.0.0.1:8000/signup/ 
+POST http://127.0.0.1:8000/register/ 
 Content-Type: application/json
 
 { "username": "Amir8", "password": "Pass1234!", "email": "amir@mail.com" }

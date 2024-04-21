@@ -8,7 +8,9 @@ from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
 from rest_framework import generics, serializers, status
 from drf_spectacular.utils import extend_schema
-from .serializers import UserRegisterSerializer
+# from .serializers import UserRegisterSerializer
+from rest_framework.permissions import AllowAny
+
 
 from rest_framework_simplejwt.tokens import RefreshToken
 
@@ -126,20 +128,22 @@ class ChatWith_claude_3_opus(APIView):
 
 class LogoutUserView(APIView):
     @extend_schema(
-        request=UserRegisterSerializer,
-        responses={200: UserRegisterSerializer}
+        request=UserSerializer,
+        responses={200: UserSerializer}
     )
     def logout_user(self, request):
         request.user.auth_token.delete()
         return Response({"Message": "You are logged out"}, status=status.HTTP_200_OK)
 
 class UserRegisterView(APIView):
+    permission_classes = [AllowAny]
+
     @extend_schema(
-        request=UserRegisterSerializer,
-        responses={200: UserRegisterSerializer}
+        request=UserSerializer,
+        responses={200: UserSerializer}
     )
-    def user_register_view(self, request):
-        serializer = UserRegisterSerializer(data=request.data)
+    def post(self, request):
+        serializer = UserSerializer(data=request.data)
         data = {}
         if serializer.is_valid():
             account = serializer.save()
@@ -151,6 +155,5 @@ class UserRegisterView(APIView):
                 'refresh': str(refresh),
                 'access': str(refresh.access_token)
             }
-        else:
-            data = serializer.errors
-        return Response(data, status=status.HTTP_200_OK)
+            return Response(data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
