@@ -11,6 +11,8 @@ from drf_spectacular.utils import extend_schema
 # from .serializers import UserRegisterSerializer
 from rest_framework.permissions import AllowAny
 
+from django.utils import timezone
+from django.shortcuts import get_object_or_404
 
 from rest_framework_simplejwt.tokens import RefreshToken
 
@@ -157,3 +159,74 @@ class UserRegisterView(APIView):
             }
             return Response(data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class SendEmailVerification(APIView):
+    def post(self, request):
+        user = get_object_or_404(User, id=request.user.id)
+        if user.email_verified:
+            return Response({"detail": "Email already verified."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Generate verification code and save it to the user object
+        verification_code = user.generate_verification_code()
+        user.email_verification_code = verification_code
+        user.email_verification_code_created_at = timezone.now()
+        user.save()
+
+        # Send verification email
+        user.send_email_verification()
+
+        return Response({"detail": "Email verification code sent successfully."})
+
+class SendSMSVerification(APIView):
+    def post(self, request):
+        user = get_object_or_404(User, id=request.user.id)
+        if user.phone_number_verified:
+            return Response({"detail": "Phone number already verified."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Generate verification code and save it to the user object
+        verification_code = user.generate_verification_code()
+        user.phone_verification_code = verification_code
+        user.phone_verification_code_created_at = timezone.now()
+        user.save()
+
+        # Send SMS verification code
+        user.send_sms_verification()
+
+        return Response({"detail": "SMS verification code sent successfully."})
+
+class VerifyEmail(APIView):
+    def post(self, request):
+        user = get_object_or_404(User, id=request.user.id)
+        verification_code = request.data.get('verification_code')
+
+        if user.email_verification_code != verification_code:
+            return Response({"detail": "Invalid verification code."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Check if verification code is expired
+        if (timezone.now() - user.email_verification_code_created_at).total_seconds() > EXPIRATION_TIME_IN_SECONDS:
+            return Response({"detail": "Verification code has expired."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Mark email as verified
+        user.email_verified = True
+        user.save()
+
+        return Response({"detail": "Email verified successfully."})
+
+class VerifyPhone(APIView):
+    def post(self, request):
+        user = get_object_or_404(User, id=request.user.id)
+        verification_code = request.data.get('verification_code')
+
+        if user.phone_verification_code != verification_code:
+            return Response({"detail": "Invalid verification code."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Check if verification code is expired
+        if (timezone.now() - user.phone_verification_code_created_at).total_seconds() > EXPIRATION_TIME_IN_SECONDS:
+            return Response({"detail": "Verification code has expired."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Mark phone number as verified
+        user.phone_number_verified = True
+        user.save()
+
+        return Response({"detail": "Phone number verified successfully."})
